@@ -16,10 +16,10 @@ class BreathingScreen(Screen):
         self.saved = False
         self.recording = False
         self.buttons = [
-            Button("Start Video", 66, 728, 184, 54, "start_video", True),
-            Button("Pause", 270, 728, 184, 54, "pause_video", False),
-            Button("Replay", 66, 798, 184, 54, "replay_video", False),
-            Button("Save", 270, 798, 184, 54, "save_resource", False),
+            Button("Start Video", 66, 730, 184, 54, "start_video", True),
+            Button("Pause", 270, 730, 184, 54, "pause_video", False),
+            Button("Replay", 66, 796, 184, 54, "replay_video", False),
+            Button("Save", 270, 796, 184, 54, "save_resource", False),
         ]
 
     def elapsed(self):
@@ -35,12 +35,12 @@ class BreathingScreen(Screen):
         r.draw_rounded_rect(456, 42, 20, 8, 3, (0.96, 0.94, 0.90, 1))
 
     def draw_back_button(self, r):
-        r.draw_shadow(54, 112, 58, 58, 29, 0.055)
-        r.draw_circle(83, 141, 29, (1, 1, 1, 0.96))
-        r.draw_text(72, 119, "‹", 42, (0.18, 0.20, 0.26, 1), bold=True)
+        r.draw_shadow(54, 112, 56, 56, 28, 0.055)
+        r.draw_circle(82, 140, 28, (1, 1, 1, 0.96))
+        r.draw_text(71, 119, "‹", 41, (0.18, 0.20, 0.26, 1), bold=True)
 
     def draw_video(self, r):
-        video_x, video_y, video_w, video_h = 54, 210, 412, 300
+        video_x, video_y, video_w, video_h = 54, 214, 412, 300
         r.draw_shadow(video_x, video_y, video_w, video_h, 30, 0.08)
         r.draw_texture(str(TEXTURES / "breathing-window.png"), video_x, video_y, video_w, video_h, 1)
         r.draw_rounded_rect(video_x, video_y, video_w, video_h, 30, (0.12, 0.09, 0.06, 0.20))
@@ -72,17 +72,17 @@ class BreathingScreen(Screen):
         r.draw_text(video_x + video_w - 98, video_y + video_h - 42, "Vol  Full", 15, (1, 1, 1, 1), bold=True)
 
     def draw_feature_card(self, r):
-        r.draw_shadow(74, 658, 372, 54, 24, 0.045)
-        r.draw_texture(str(TEXTURES / "journal-desk.png"), 74, 658, 372, 54, 0.92)
-        r.draw_rounded_rect(74, 658, 372, 54, 24, (0.11, 0.08, 0.05, 0.34))
-        r.draw_text(96, 666, "A quiet one-minute guide", 19, (1, 1, 1, 1), bold=True)
-        r.draw_text(96, 689, "Designed for the pause before studying again.", 12, (1, 1, 1, 0.90))
+        r.draw_shadow(74, 666, 372, 50, 23, 0.045)
+        r.draw_texture(str(TEXTURES / "journal-desk.png"), 74, 666, 372, 50, 0.92)
+        r.draw_rounded_rect(74, 666, 372, 50, 23, (0.11, 0.08, 0.05, 0.34))
+        r.draw_text(96, 672, "A quiet one-minute guide", 18, (1, 1, 1, 1), bold=True)
+        r.draw_text(96, 694, "Designed for the pause before studying again.", 12, (1, 1, 1, 0.90))
 
     def draw_voice_panel(self, r):
-        r.draw_shadow(54, 864, 412, 64, 24, 0.050)
-        r.draw_rounded_rect(54, 864, 412, 64, 24, (1, 1, 1, 0.92))
-        r.draw_text(78, 878, "Voice check-in", 18, (0.18, 0.20, 0.26, 1), bold=True)
-        r.draw_text(78, 902, "Record a short feeling note.", 13, (0.44, 0.48, 0.58, 1))
+        r.draw_shadow(54, 864, 412, 62, 24, 0.050)
+        r.draw_rounded_rect(54, 864, 412, 62, 24, (1, 1, 1, 0.92))
+        r.draw_text(78, 876, "Voice check-in", 18, (0.18, 0.20, 0.26, 1), bold=True)
+        r.draw_text(78, 900, "Record a short feeling note.", 13, (0.44, 0.48, 0.58, 1))
         pulse = 1.0 + (0.08 * math.sin(time.time() * 8) if self.recording else 0)
         r.draw_circle(420, 896, 28 * pulse, (0.91, 0.55, 0.66, 1))
         r.draw_rounded_rect(411, 876, 18, 26, 9, (1, 1, 1, 1))
@@ -99,15 +99,15 @@ class BreathingScreen(Screen):
         self.draw_status_bar(r)
         self.draw_back_button(r)
 
-        r.draw_text(132, 116, "Guided Calm Video", 30, (0.18, 0.20, 0.26, 1), bold=True)
-        r.draw_text(132, 164, "Breathing Exercise", 20, (0.44, 0.48, 0.58, 1))
+        r.draw_text(124, 116, "Guided Calm Video", 30, (0.18, 0.20, 0.26, 1), bold=True)
+        r.draw_text(124, 162, "Breathing Exercise", 20, (0.44, 0.48, 0.58, 1))
 
         self.draw_video(r)
 
-        r.draw_text(54, 532, "1-Minute Guided Breathing", 19, (0.43, 0.51, 0.90, 1), bold=True)
-        r.draw_text(54, 560, "Take a soft pause", 31, (0.18, 0.20, 0.26, 1), bold=True)
-        r.draw_text(54, 602, "Follow the breathing rhythm and let your body", 18, (0.44, 0.48, 0.58, 1))
-        r.draw_text(54, 628, "slow down for one minute.", 18, (0.44, 0.48, 0.58, 1))
+        r.draw_text(54, 538, "1-Minute Guided Breathing", 19, (0.43, 0.51, 0.90, 1), bold=True)
+        r.draw_text(54, 566, "Take a soft pause", 31, (0.18, 0.20, 0.26, 1), bold=True)
+        r.draw_text(54, 608, "Follow the breathing rhythm and let your body", 18, (0.44, 0.48, 0.58, 1))
+        r.draw_text(54, 634, "slow down for one minute.", 18, (0.44, 0.48, 0.58, 1))
 
         self.draw_feature_card(r)
 
@@ -115,8 +115,8 @@ class BreathingScreen(Screen):
             button.draw(r)
 
         if self.saved:
-            r.draw_rounded_rect(146, 826, 228, 40, 20, (0.18, 0.20, 0.26, 0.92))
-            r.draw_text(176, 836, "Saved to your resources", 15, (1, 1, 1, 1), bold=True)
+            r.draw_rounded_rect(146, 718, 228, 38, 19, (0.18, 0.20, 0.26, 0.92))
+            r.draw_text(176, 727, "Saved to your resources", 15, (1, 1, 1, 1), bold=True)
 
         self.draw_voice_panel(r)
 

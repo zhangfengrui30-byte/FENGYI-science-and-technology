@@ -138,6 +138,11 @@ class Renderer:
         except OSError:
             return ImageFont.load_default()
 
+    def measure_text(self, text, size=18, bold=False):
+        font = self._font(size, bold)
+        bbox = font.getbbox(text)
+        return max(1, bbox[2] - bbox[0] + 8), max(1, bbox[3] - bbox[1] + 8)
+
     def draw_text(self, x, y, text, size=18, color=(0.18, 0.20, 0.26, 1), bold=False):
         key = (text, size, color, bold)
         if key not in self.text_cache:
@@ -172,4 +177,3 @@ class Renderer:
         glVertex2f(x, y + height)
         glEnd()
         return width, height
-
