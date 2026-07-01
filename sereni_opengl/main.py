@@ -52,6 +52,7 @@ class SereniApp:
             self.current = name
 
     def on_cursor(self, _window, x, y):
+        x, y = self.window.map_cursor_pos(x, y)
         self.screens[self.current].update_hover(x, y)
 
     def on_key(self, _window, key, _scancode, action, _mods):
