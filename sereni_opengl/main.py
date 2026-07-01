@@ -30,8 +30,8 @@ class SereniApp:
         if not glfw.init():
             raise RuntimeError("Failed to initialize GLFW")
 
-        self.window = Window(1024, 768, "Sereni - Guided Calm OpenGL Prototype")
-        self.renderer = Renderer(1024, 768)
+        self.window = Window(520, 960, "Sereni - Guided Calm OpenGL Mobile Prototype")
+        self.renderer = Renderer(520, 960)
         self.audio = AudioPlayer()
         self.screens = {
             "home": HomeScreen(self.renderer),
@@ -39,7 +39,7 @@ class SereniApp:
             "breathing": BreathingScreen(self.renderer),
             "resources": ResourcesScreen(self.renderer),
         }
-        self.current = "home"
+        self.current = "breathing"
         self.window.set_mouse_button_callback(self.on_mouse_button)
         self.window.set_cursor_pos_callback(self.on_cursor)
         self.window.set_key_callback(self.on_key)
@@ -83,16 +83,19 @@ class SereniApp:
             return
         if action_name == "start_video":
             self.switch("breathing")
-            breathing.playing = True
-            if not breathing.started_at:
+            if not breathing.playing:
                 import time
                 breathing.started_at = time.time()
-            self.audio.play(str(SOUNDS / "calm_music.wav"), loop=True)
+                breathing.playing = True
+                self.audio.play(str(SOUNDS / "calm_music.wav"), loop=True)
         elif action_name == "pause_video":
+            breathing.paused_elapsed = breathing.elapsed()
+            breathing.started_at = None
             breathing.playing = False
             self.audio.stop()
         elif action_name == "replay_video":
             import time
+            breathing.paused_elapsed = 0
             breathing.started_at = time.time()
             breathing.playing = True
             self.audio.play(str(SOUNDS / "calm_music.wav"), loop=True)
@@ -119,4 +122,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         app.cleanup()
         sys.exit(0)
-
