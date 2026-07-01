@@ -1,48 +1,90 @@
-# Sereni Guided Calm Video Prototype
+# Sereni OpenGL Guided Calm Prototype
 
-This project is a high-fidelity mobile app prototype for the Sereni mental
-health flow. It recreates the Guided Calm Video page as a runnable Flask web
-app with an iPhone-style interface.
+Sereni is a high-fidelity desktop prototype for a student mental-health support
+application. The interface is rendered with the standard OpenGL API through
+Python, PyOpenGL, and GLFW. It includes visual interaction, breathing animation,
+image textures, and calming audio playback.
+
+This version intentionally uses an OpenGL desktop client instead of a Flask
+webpage, matching the assignment requirement to demonstrate a standard API plus
+visual and audio techniques.
+
+## Project Structure
+
+```text
+sereni_opengl/
+├── main.py
+├── ui/
+│   ├── window.py
+│   ├── renderer.py
+│   └── components.py
+├── audio/
+│   └── player.py
+├── assets/
+│   ├── sounds/
+│   └── textures/
+├── screens/
+│   ├── home.py
+│   ├── reflection.py
+│   ├── breathing.py
+│   └── resources.py
+└── requirements.txt
+```
 
 ## Features
 
-- iPhone-style mobile frame and status bar
-- Guided Calm Video screen
-- Rounded video player with calming image background
-- Soft breathing animation with Inhale, Hold, and Exhale states
-- Momo companion in the video corner
-- Play, pause, replay, save, volume, and fullscreen interactions
-- 1-minute calming background music
-- Toast messages and modal feedback
-- Voice check-in panel with browser recording and speech recognition support
-- Flask backend with a reserved OpenAI API integration endpoint
+- OpenGL-rendered desktop app window
+- High-fidelity Sereni visual style
+- Home, AI Reflection, Guided Breathing, and Campus Resources screens
+- Large calming video-style panel rendered as an OpenGL texture
+- Soft breathing circle animation with Inhale, Hold, and Exhale states
+- Momo companion texture inside the breathing guide
+- Play, pause, replay, save, and back interactions
+- Looping WAV background music for the breathing guide
+- Keyboard support: `Esc` returns home or exits, `Space` starts breathing
 
-## Run Locally
+## Install
+
+```bash
+cd sereni_opengl
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+If you already use the repository-level virtual environment, run:
 
 ```bash
 source .venv/bin/activate
-python app.py
+pip install -r sereni_opengl/requirements.txt
 ```
 
-Open:
+## Run
 
-```text
-http://127.0.0.1:5000
+From the repository root:
+
+```bash
+source .venv/bin/activate
+python sereni_opengl/main.py
 ```
 
-## Main Files
+Or from inside `sereni_opengl/`:
 
-- `index.html` - frontend UI, styling, and JavaScript interactions
-- `app.py` - Flask server and API routes
-- `requirements.txt` - Python dependencies
-- `assets/sereni-generated-v2/` - local visual and audio assets
-
-## OpenAI Setup
-
-The app works in demo mode without an API key. To enable real AI responses,
-create a `.env` file and add:
-
-```text
-OPENAI_API_KEY=your_api_key_here
-OPENAI_MODEL=gpt-4.1-mini
+```bash
+python main.py
 ```
+
+## Visual and Audio Techniques
+
+- Visual: gradient backgrounds, transparency blending, rounded OpenGL panels,
+  animated breathing circles, texture-loaded imagery, and text rendered as
+  OpenGL textures.
+- Audio: `simpleaudio` WAV playback with looping calm music during the guided
+  breathing screen.
+
+## Nielsen Usability Principles
+
+The prototype supports system status visibility through screen titles and audio
+state, user control through back/pause/replay actions, consistency through shared
+buttons and cards, error prevention through large click targets, and minimalist
+design through a focused calm interaction flow.

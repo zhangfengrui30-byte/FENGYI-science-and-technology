@@ -1,3 +1,1 @@
-Flask==3.0.3
-openai==1.93.0
-python-dotenv==1.0.1
+-r sereni_opengl/requirements.txt
