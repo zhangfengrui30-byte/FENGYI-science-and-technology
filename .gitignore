@@ -1,0 +1,15 @@
+.DS_Store
+.env
+.venv/
+.idea/
+.jupyter/
+.mplconfig/
+.python_packages/
+__pycache__/
+*.pyc
+output/
+tmp/
+*.zip
+*.pptx
+*.ipynb
+*.csv

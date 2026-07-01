@@ -1,0 +1,1043 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sereni Guided Calm Video Prototype</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #2e3442;
+      --muted: #6e778c;
+      --soft: #f5f1eb;
+      --surface: rgba(255, 255, 255, 0.92);
+      --blue: #84a2f4;
+      --blue-deep: #647fe7;
+      --mint: #bfe5dc;
+      --line: rgba(72, 74, 82, 0.12);
+      --shadow: 0 20px 46px rgba(50, 45, 38, 0.14);
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+      font-synthesis-weight: none;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 14%, rgba(132, 162, 244, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 18%, rgba(191, 229, 220, 0.22), transparent 25%),
+        linear-gradient(145deg, #efe9df 0%, #fbf8f2 45%, #ebe4da 100%);
+      overflow: hidden;
+    }
+
+    .device {
+      width: 430px;
+      max-width: calc(100vw - 24px);
+      height: 932px;
+      max-height: calc(100vh - 24px);
+      padding: 12px;
+      border-radius: 58px;
+      background: linear-gradient(180deg, #fefcf9, #ded6ca);
+      box-shadow:
+        0 34px 90px rgba(33, 30, 26, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.74);
+    }
+
+    .screen {
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      border-radius: 48px;
+      background:
+        linear-gradient(180deg, rgba(250, 247, 241, 0.96) 0%, rgba(246, 242, 235, 0.98) 100%),
+        #f7f3ec;
+    }
+
+    .status-bar {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 26px 0;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cell,
+    .wifi {
+      height: 10px;
+      border-radius: 3px;
+      background: #535762;
+    }
+
+    .cell {
+      width: 22px;
+    }
+
+    .wifi {
+      width: 20px;
+      border-radius: 999px;
+    }
+
+    .battery {
+      width: 28px;
+      height: 15px;
+      position: relative;
+      border: 2px solid #535762;
+      border-radius: 5px;
+      padding: 2px;
+    }
+
+    .battery::before {
+      content: "";
+      display: block;
+      width: 68%;
+      height: 100%;
+      border-radius: 2px;
+      background: #535762;
+    }
+
+    .page {
+      height: calc(100% - 48px);
+      overflow-y: auto;
+      scrollbar-width: none;
+      padding: 22px 24px 112px;
+    }
+
+    .page::-webkit-scrollbar {
+      display: none;
+    }
+
+    .app-header {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .back-button {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 12px 22px rgba(42, 37, 30, 0.09);
+      cursor: pointer;
+    }
+
+    .back-button span {
+      width: 14px;
+      height: 14px;
+      display: block;
+      border-left: 4px solid currentColor;
+      border-bottom: 4px solid currentColor;
+      transform: rotate(45deg) translate(2px, -2px);
+      border-radius: 2px;
+    }
+
+    h1 {
+      font-size: 30px;
+      line-height: 1.06;
+      font-weight: 700;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      font-size: 18px;
+      line-height: 1.2;
+      color: var(--muted);
+    }
+
+    .video-shell {
+      position: relative;
+      height: 340px;
+      overflow: hidden;
+      border-radius: 30px;
+      background: #d8d6c6;
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+
+    .video-photo {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(42,34,26,0.2)),
+        url("/assets/sereni-generated-v2/breathing-window.png") center / cover;
+      transform: scale(1.03);
+    }
+
+    .video-tint {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 47%, rgba(255,255,255,0.3), transparent 25%),
+        linear-gradient(180deg, rgba(32, 29, 26, 0.04), rgba(34, 28, 22, 0.46));
+      z-index: 1;
+    }
+
+    .breathing-orb {
+      width: 150px;
+      height: 150px;
+      position: absolute;
+      left: 50%;
+      top: 47%;
+      z-index: 2;
+      transform: translate(-50%, -50%) scale(0.86);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(255,255,255,0.68) 0%, rgba(255,255,255,0.35) 38%, rgba(133,162,244,0.22) 68%, rgba(255,255,255,0.08) 100%);
+      box-shadow:
+        0 0 0 34px rgba(255,255,255,0.22),
+        0 0 0 64px rgba(132,162,244,0.18);
+      transition: transform 680ms ease, opacity 300ms ease;
+    }
+
+    .screen.playing .breathing-orb {
+      animation: breathe 8s ease-in-out infinite;
+    }
+
+    .video-word {
+      position: absolute;
+      left: 50%;
+      top: 47%;
+      z-index: 3;
+      transform: translate(-50%, -50%);
+      font-size: 26px;
+      font-weight: 700;
+      color: rgba(47, 51, 64, 0.86);
+      text-shadow: 0 1px 16px rgba(255,255,255,0.8);
+    }
+
+    .play-center {
+      width: 82px;
+      height: 82px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 4;
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(180deg, #9cb5fb, #7f98ef);
+      box-shadow: 0 16px 34px rgba(93, 116, 220, 0.34);
+      cursor: pointer;
+    }
+
+    .play-icon,
+    .pause-icon {
+      display: block;
+    }
+
+    .play-icon {
+      width: 0;
+      height: 0;
+      margin-left: 6px;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left: 24px solid currentColor;
+    }
+
+    .pause-icon {
+      width: 28px;
+      height: 30px;
+      display: none;
+      background:
+        linear-gradient(90deg, currentColor 0 34%, transparent 34% 66%, currentColor 66% 100%);
+      border-radius: 3px;
+    }
+
+    .screen.playing .play-icon {
+      display: none;
+    }
+
+    .screen.playing .pause-icon {
+      display: block;
+    }
+
+    .momo {
+      width: 66px;
+      height: 66px;
+      position: absolute;
+      right: 32px;
+      bottom: 62px;
+      z-index: 4;
+      border-radius: 18px;
+      border: 3px solid rgba(255, 255, 255, 0.96);
+      background: url("/assets/sereni-generated-v2/momo-companion.png") center / cover;
+      box-shadow: 0 12px 24px rgba(30, 25, 22, 0.22);
+    }
+
+    .video-controls {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      bottom: 24px;
+      z-index: 5;
+      color: white;
+    }
+
+    .progress-line {
+      height: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.56);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f2b7c6, #94aefb);
+      transition: width 240ms linear;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.28);
+    }
+
+    .icon-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .small-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.52);
+      border-radius: 50%;
+      color: white;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+    }
+
+    .volume-shape {
+      width: 18px;
+      height: 16px;
+      background:
+        linear-gradient(90deg, transparent 0 20%, currentColor 20% 48%, transparent 48%),
+        linear-gradient(135deg, transparent 0 42%, currentColor 43% 64%, transparent 65%);
+    }
+
+    .fullscreen-shape {
+      width: 17px;
+      height: 17px;
+      border: 2px solid currentColor;
+      border-radius: 3px;
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,0.1);
+    }
+
+    .label {
+      margin-top: 26px;
+      color: #6d82e8;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    h2 {
+      margin-top: 8px;
+      font-size: 32px;
+      line-height: 1.08;
+      font-weight: 700;
+    }
+
+    .description {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .feature-card {
+      min-height: 74px;
+      margin-top: 18px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: end;
+      padding: 0 20px 14px;
+      border-radius: 28px;
+      color: white;
+      background: url("/assets/sereni-generated-v2/journal-desk.png") center / cover;
+      box-shadow: 0 16px 28px rgba(47, 41, 35, 0.13);
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(34, 28, 22, 0.58), rgba(34, 28, 22, 0.08));
+    }
+
+    .feature-copy {
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-copy strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .feature-copy span {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 18px;
+      margin-top: 24px;
+    }
+
+    .action {
+      height: 58px;
+      position: relative;
+      border: 1px solid rgba(91, 87, 80, 0.16);
+      border-radius: 28px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #5667bb;
+      background: rgba(255,255,255,0.9);
+      box-shadow:
+        0 14px 28px rgba(47, 41, 35, 0.12),
+        inset 0 -5px 0 rgba(132, 162, 244, 0.24),
+        inset 0 1px 0 rgba(255,255,255,0.96);
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .action.primary {
+      color: white;
+      border: 0;
+      background: linear-gradient(180deg, #9eb7ff 0%, #7e9af0 100%);
+      box-shadow:
+        0 18px 32px rgba(93, 116, 220, 0.28),
+        inset 0 -6px 0 rgba(73, 92, 207, 0.22),
+        inset 0 2px 0 rgba(255,255,255,0.28);
+    }
+
+    .action:active {
+      transform: translateY(2px);
+      box-shadow:
+        0 8px 18px rgba(47, 41, 35, 0.12),
+        inset 0 -3px 0 rgba(132, 162, 244, 0.18);
+    }
+
+    .voice-panel {
+      margin-top: 26px;
+      padding: 18px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.74);
+    }
+
+    .panel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .panel-subtitle {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .mic-button {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #f6baca, #e892aa);
+      box-shadow: 0 12px 24px rgba(222, 121, 151, 0.27);
+      cursor: pointer;
+    }
+
+    .mic-shape {
+      width: 18px;
+      height: 28px;
+      border-radius: 10px;
+      background: white;
+      position: relative;
+      transform: translateY(-4px);
+    }
+
+    .mic-shape::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 13px;
+      width: 34px;
+      height: 22px;
+      border: 3px solid white;
+      border-top: 0;
+      border-radius: 0 0 18px 18px;
+      background: transparent;
+      transform: translateX(-50%);
+    }
+
+    .mic-shape::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -14px;
+      width: 18px;
+      height: 3px;
+      border-radius: 999px;
+      background: white;
+      transform: translateX(-50%);
+    }
+
+    .recording .mic-button {
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .wave {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 16px;
+      padding: 0 3px;
+    }
+
+    .wave span {
+      width: 7px;
+      height: 12px;
+      border-radius: 999px;
+      background: #c9d3ff;
+      transition: height 220ms ease;
+    }
+
+    .recording .wave span {
+      animation: bars 900ms ease-in-out infinite;
+    }
+
+    .wave span:nth-child(2) { animation-delay: 90ms; }
+    .wave span:nth-child(3) { animation-delay: 180ms; }
+    .wave span:nth-child(4) { animation-delay: 270ms; }
+    .wave span:nth-child(5) { animation-delay: 360ms; }
+    .wave span:nth-child(6) { animation-delay: 450ms; }
+    .wave span:nth-child(7) { animation-delay: 540ms; }
+    .wave span:nth-child(8) { animation-delay: 630ms; }
+
+    .transcript {
+      min-height: 62px;
+      margin-top: 10px;
+      padding: 13px 14px;
+      border-radius: 18px;
+      color: #4c5568;
+      background: #f7f4ee;
+      border: 1px solid rgba(60, 54, 48, 0.08);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .ai-reply {
+      display: none;
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 18px;
+      color: #3f4b65;
+      background: #eef3ff;
+      font-size: 14px;
+      line-height: 1.45;
+      border: 1px solid rgba(111, 133, 232, 0.16);
+    }
+
+    .bottom-home {
+      width: 40%;
+      height: 5px;
+      position: absolute;
+      left: 30%;
+      bottom: 12px;
+      border-radius: 999px;
+      background: rgba(38, 40, 46, 0.18);
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 34px;
+      z-index: 20;
+      min-width: 228px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      background: rgba(48, 52, 66, 0.92);
+      box-shadow: 0 20px 40px rgba(26, 25, 28, 0.24);
+      transform: translate(-50%, 24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .modal {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 26px;
+      background: rgba(38, 36, 34, 0.36);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      padding: 24px;
+      border-radius: 30px;
+      text-align: center;
+      background: rgba(255,255,255,0.96);
+      box-shadow: 0 24px 70px rgba(34, 31, 27, 0.26);
+    }
+
+    .modal-card h3 {
+      font-size: 23px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .modal-card p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .modal-card .action {
+      width: 100%;
+      margin-top: 18px;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(0.78); opacity: 0.78; }
+      36% { transform: translate(-50%, -50%) scale(1.16); opacity: 1; }
+      58% { transform: translate(-50%, -50%) scale(1.16); opacity: 1; }
+      86% { transform: translate(-50%, -50%) scale(0.78); opacity: 0.82; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 12px 24px rgba(222, 121, 151, 0.27); }
+      50% { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(232, 146, 170, 0.16), 0 18px 28px rgba(222, 121, 151, 0.25); }
+    }
+
+    @keyframes bars {
+      0%, 100% { height: 12px; }
+      50% { height: 36px; }
+    }
+
+    @media (max-height: 820px) {
+      .device {
+        transform: scale(0.88);
+      }
+    }
+
+    @media (max-width: 460px) {
+      body {
+        padding: 0;
+      }
+
+      .device {
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        max-height: none;
+        padding: 0;
+        border-radius: 0;
+      }
+
+      .screen {
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="device" aria-label="iPhone prototype frame">
+    <section class="screen" id="appScreen">
+      <audio id="calmAudio" preload="auto" loop>
+        <source src="/assets/sereni-generated-v2/calm-breathing-music.wav" type="audio/wav" />
+      </audio>
+
+      <div class="status-bar">
+        <div>9:41</div>
+        <div class="status-icons" aria-hidden="true">
+          <span class="cell"></span>
+          <span class="wifi"></span>
+          <span class="battery"></span>
+        </div>
+      </div>
+
+      <div class="page">
+        <header class="app-header">
+          <button class="back-button" id="backButton" aria-label="Back to Mental Health Hub">
+            <span></span>
+          </button>
+          <div>
+            <h1>Guided Calm Video</h1>
+            <p class="subtitle">Breathing Exercise</p>
+          </div>
+        </header>
+
+        <section class="video-shell" aria-label="1-minute guided breathing video player">
+          <div class="video-photo"></div>
+          <div class="video-tint"></div>
+          <div class="breathing-orb"></div>
+          <div class="video-word" id="videoWord">Inhale</div>
+          <button class="play-center" id="playButton" aria-label="Play or pause guided video">
+            <span class="play-icon"></span>
+            <span class="pause-icon"></span>
+          </button>
+          <div class="momo" aria-label="Momo companion"></div>
+          <div class="video-controls">
+            <div class="progress-line">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="control-row">
+              <span id="timestamp">0:00 / 1:00</span>
+              <div class="icon-buttons">
+                <button class="small-icon" id="volumeButton" aria-label="Toggle volume">
+                  <span class="volume-shape"></span>
+                </button>
+                <button class="small-icon" id="fullscreenButton" aria-label="Open fullscreen preview">
+                  <span class="fullscreen-shape"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <p class="label">1-Minute Guided Breathing</p>
+        <h2>Take a soft pause</h2>
+        <p class="description">Follow the breathing rhythm and let your body slow down for one minute.</p>
+
+        <section class="feature-card" aria-label="Video description card">
+          <div class="feature-copy">
+            <strong>A quiet one-minute guide</strong>
+            <span>Designed for the pause before studying again.</span>
+          </div>
+        </section>
+
+        <section class="button-grid" aria-label="Video action buttons">
+          <button class="action primary" id="startButton">Start Video</button>
+          <button class="action" id="pauseButton">Pause</button>
+          <button class="action" id="replayButton">Replay</button>
+          <button class="action" id="saveButton">Save</button>
+        </section>
+
+        <section class="voice-panel" id="voicePanel">
+          <div class="panel-top">
+            <div>
+              <div class="panel-title">Voice check-in</div>
+              <p class="panel-subtitle">Record a short feeling note after the breathing video.</p>
+            </div>
+            <button class="mic-button" id="recordButton" aria-label="Start or stop recording">
+              <span class="mic-shape"></span>
+            </button>
+          </div>
+          <div class="wave" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="transcript" id="transcript">Tap the microphone to record. Browser speech recognition will appear here when available.</div>
+          <div class="ai-reply" id="aiReply"></div>
+        </section>
+      </div>
+
+      <div class="toast" id="toast">Saved to your resources</div>
+      <div class="bottom-home"></div>
+
+      <div class="modal" id="modal">
+        <div class="modal-card">
+          <h3 id="modalTitle">Fullscreen preview</h3>
+          <p id="modalText">The guided breathing video is ready for a presentation-style preview.</p>
+          <button class="action primary" id="closeModal">Close</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const screen = document.getElementById("appScreen");
+    const playButton = document.getElementById("playButton");
+    const startButton = document.getElementById("startButton");
+    const pauseButton = document.getElementById("pauseButton");
+    const replayButton = document.getElementById("replayButton");
+    const saveButton = document.getElementById("saveButton");
+    const backButton = document.getElementById("backButton");
+    const fullscreenButton = document.getElementById("fullscreenButton");
+    const volumeButton = document.getElementById("volumeButton");
+    const calmAudio = document.getElementById("calmAudio");
+    const progressFill = document.getElementById("progressFill");
+    const timestamp = document.getElementById("timestamp");
+    const videoWord = document.getElementById("videoWord");
+    const toast = document.getElementById("toast");
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const closeModal = document.getElementById("closeModal");
+    const recordButton = document.getElementById("recordButton");
+    const voicePanel = document.getElementById("voicePanel");
+    const transcript = document.getElementById("transcript");
+    const aiReply = document.getElementById("aiReply");
+
+    let currentSecond = 0;
+    let timer = null;
+    let muted = false;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recognition = null;
+
+    calmAudio.volume = 0.46;
+
+    function formatTime(seconds) {
+      return `0:${String(seconds).padStart(2, "0")}`;
+    }
+
+    function updateVideoUI() {
+      progressFill.style.width = `${Math.min(currentSecond / 60, 1) * 100}%`;
+      timestamp.textContent = `${formatTime(currentSecond)} / 1:00`;
+
+      const phase = currentSecond % 12;
+      if (phase < 4) {
+        videoWord.textContent = "Inhale";
+      } else if (phase < 6) {
+        videoWord.textContent = "Hold";
+      } else {
+        videoWord.textContent = "Exhale";
+      }
+    }
+
+    function playVideo() {
+      if (timer) return;
+      screen.classList.add("playing");
+      calmAudio.play().catch(() => {
+        showToast("Tap Start Video to enable sound");
+      });
+      timer = window.setInterval(() => {
+        currentSecond += 1;
+        if (currentSecond >= 60) {
+          currentSecond = 60;
+          pauseVideo();
+          showModal("Session complete", "You finished the one-minute guided breathing exercise.");
+        }
+        updateVideoUI();
+      }, 1000);
+    }
+
+    function pauseVideo() {
+      screen.classList.remove("playing");
+      calmAudio.pause();
+      window.clearInterval(timer);
+      timer = null;
+    }
+
+    function replayVideo() {
+      pauseVideo();
+      currentSecond = 0;
+      calmAudio.currentTime = 0;
+      updateVideoUI();
+      showToast("Returned to start");
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timeout);
+      showToast.timeout = window.setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function showModal(title, text) {
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modal.classList.add("open");
+    }
+
+    function hideModal() {
+      modal.classList.remove("open");
+    }
+
+    async function sendReflection(message) {
+      aiReply.style.display = "block";
+      aiReply.textContent = "Preparing a gentle response...";
+
+      try {
+        const response = await fetch("/api/reflection", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+        const data = await response.json();
+        aiReply.textContent = data.reply || data.error || "Your reflection was received.";
+      } catch (error) {
+        aiReply.textContent = "Demo mode: your reflection was captured locally. The backend endpoint is ready for OpenAI integration.";
+      }
+    }
+
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return null;
+
+      const rec = new SpeechRecognition();
+      rec.lang = "en-US";
+      rec.interimResults = true;
+      rec.continuous = false;
+
+      rec.onresult = (event) => {
+        const text = Array.from(event.results)
+          .map((result) => result[0].transcript)
+          .join(" ")
+          .trim();
+        transcript.textContent = text || "Listening...";
+        if (event.results[event.results.length - 1].isFinal) {
+          sendReflection(text);
+        }
+      };
+
+      rec.onerror = () => {
+        transcript.textContent = "Speech recognition is not available in this browser. Recording still works for the demo.";
+      };
+
+      return rec;
+    }
+
+    async function startRecording() {
+      voicePanel.classList.add("recording");
+      transcript.textContent = "Listening... say how you feel after the breathing pause.";
+      aiReply.style.display = "none";
+      recordedChunks = [];
+
+      recognition = initSpeechRecognition();
+      if (recognition) {
+        try { recognition.start(); } catch (error) {}
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) recordedChunks.push(event.data);
+        };
+        mediaRecorder.onstop = () => {
+          stream.getTracks().forEach((track) => track.stop());
+          if (!recognition) {
+            transcript.textContent = "Recording saved for demo. Speech-to-text can be connected through OpenAI Whisper or the browser API.";
+            sendReflection("I completed the breathing exercise and recorded a short check-in.");
+          }
+        };
+        mediaRecorder.start();
+      } catch (error) {
+        transcript.textContent = "Microphone permission was blocked. You can still demo the AI response with a sample reflection.";
+        sendReflection("I feel calmer after one minute of breathing, but still a bit stressed about studying.");
+        voicePanel.classList.remove("recording");
+      }
+    }
+
+    function stopRecording() {
+      voicePanel.classList.remove("recording");
+      if (recognition) {
+        try { recognition.stop(); } catch (error) {}
+      }
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+    }
+
+    playButton.addEventListener("click", () => timer ? pauseVideo() : playVideo());
+    startButton.addEventListener("click", playVideo);
+    pauseButton.addEventListener("click", pauseVideo);
+    replayButton.addEventListener("click", replayVideo);
+    saveButton.addEventListener("click", () => showToast("Saved to your resources"));
+    backButton.addEventListener("click", () => showToast("Back to Mental Health Hub"));
+    closeModal.addEventListener("click", hideModal);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) hideModal();
+    });
+
+    fullscreenButton.addEventListener("click", () => {
+      showModal("Fullscreen preview", "In the real app this opens the calming video in fullscreen mode.");
+    });
+
+    volumeButton.addEventListener("click", () => {
+      muted = !muted;
+      calmAudio.muted = muted;
+      showToast(muted ? "Volume muted" : "Volume on");
+      volumeButton.style.opacity = muted ? "0.54" : "1";
+    });
+
+    recordButton.addEventListener("click", () => {
+      if (voicePanel.classList.contains("recording")) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+
+    updateVideoUI();
+  </script>
+</body>
+</html>
