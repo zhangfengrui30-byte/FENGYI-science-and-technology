@@ -66,6 +66,15 @@ class Renderer:
         glEnd()
         glEnable(GL_TEXTURE_2D)
 
+    def draw_triangle(self, points, color):
+        glDisable(GL_TEXTURE_2D)
+        glColor4f(*color)
+        glBegin(GL_TRIANGLES)
+        for x, y in points:
+            glVertex2f(x, y)
+        glEnd()
+        glEnable(GL_TEXTURE_2D)
+
     def draw_rounded_rect(self, x, y, width, height, radius, color, segments=18):
         radius = min(radius, width / 2, height / 2)
         glDisable(GL_TEXTURE_2D)

@@ -45,7 +45,7 @@ class BreathingScreen(Screen):
         r.draw_shadow(video_x, video_y, video_w, video_h, 30, 0.08)
         r.draw_texture(str(TEXTURES / "breathing-window.png"), video_x, video_y, video_w, video_h, 1)
         r.draw_rounded_rect(video_x, video_y, video_w, video_h, 30, (0.12, 0.09, 0.06, 0.20))
-        r.draw_rounded_rect(video_x + 18, video_y + 18, 160, 30, 15, (1, 1, 1, 0.28))
+        r.draw_rounded_rect(video_x + 18, video_y + 18, 138, 30, 15, (1, 1, 1, 0.28))
         r.draw_text(video_x + 34, video_y + 24, "Guided calm", 13, (1, 1, 1, 0.96), bold=True)
 
         elapsed = self.elapsed()
@@ -54,17 +54,27 @@ class BreathingScreen(Screen):
         breathe = 0.84 + 0.22 * (0.5 + 0.5 * math.sin(time.time() * math.pi / 4)) if self.playing else 0.90
         cx, cy = video_x + video_w / 2, video_y + 154
 
-        r.draw_circle(cx, cy, 92 * breathe, (1, 1, 1, 0.24))
-        r.draw_circle(cx, cy, 61 * breathe, (0.55, 0.65, 0.94, 0.44))
-        r.draw_text(cx - 38, cy - 16, word, 27, (0.18, 0.20, 0.26, 0.92), bold=True)
-
-        r.draw_circle(cx, cy + 10, 72, (1, 1, 1, 0.17))
-        r.draw_circle(cx, cy + 10, 43, (0.52, 0.63, 0.94, 1))
+        r.draw_circle(cx, cy, 88 * breathe, (1, 1, 1, 0.18))
+        r.draw_circle(cx, cy, 58 * breathe, (0.62, 0.70, 0.95, 0.30))
         if self.playing:
-            r.draw_rect(cx - 12, cy - 6, 8, 28, (1, 1, 1, 1))
-            r.draw_rect(cx + 6, cy - 6, 8, 28, (1, 1, 1, 1))
+            text_w, _ = r.measure_text(word, 26, bold=True)
+            r.draw_text(cx - text_w / 2, cy - 74, word, 26, (0.18, 0.20, 0.26, 0.88), bold=True)
+
+        control_y = cy + 8
+        r.draw_circle(cx, control_y, 70, (1, 1, 1, 0.18))
+        r.draw_circle(cx, control_y, 43, (0.52, 0.63, 0.94, 1))
+        if self.playing:
+            r.draw_rounded_rect(cx - 13, control_y - 15, 9, 30, 3, (1, 1, 1, 1))
+            r.draw_rounded_rect(cx + 5, control_y - 15, 9, 30, 3, (1, 1, 1, 1))
         else:
-            r.draw_text(cx - 10, cy - 18, "▶", 34, (1, 1, 1, 1), bold=True)
+            r.draw_triangle(
+                [
+                    (cx - 10, control_y - 18),
+                    (cx - 10, control_y + 18),
+                    (cx + 20, control_y),
+                ],
+                (1, 1, 1, 1),
+            )
 
         r.draw_texture(str(TEXTURES / "momo-companion.png"), video_x + video_w - 86, video_y + video_h - 116, 62, 62)
         r.draw_rounded_rect(video_x + video_w - 88, video_y + video_h - 118, 66, 66, 18, (1, 1, 1, 0.30))
